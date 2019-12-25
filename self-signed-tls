@@ -76,43 +76,43 @@ done
 checkVariables() {
   # Country
   if [ -z "$C" ]; then
-    echo -n "Country Name (2 letter code) [AU]:"
+    echo -n "Country Name (2 letter code) [AU]: "
     read -r C
   fi
 
   # State
   if [ -z "$ST" ]; then
-    echo -n "State or Province Name (full name) [Some-State]:"
+    echo -n "State or Province Name (full name) [Some-State]: "
     read -r ST
   fi
 
   # Locality
   if [ -z "$L" ]; then
-    echo -n "Locality Name (eg, city) []:"
+    echo -n "Locality Name (eg, city) []: "
     read -r L
   fi
 
   # Organization
   if [ -z "$O" ]; then
-    echo -n "Organization Name (eg, company) [Internet Widgits Pty Ltd]:"
+    echo -n "Organization Name (eg, company) [Internet Widgits Pty Ltd]: "
     read -r O
   fi
 
   # Organizational Unit
   if [ -z "$OU" ]; then
-    echo -n "Organizational Unit Name (eg, section) []:"
+    echo -n "Organizational Unit Name (eg, section) []: "
     read -r OU
   fi
 
   # Common Name
   if [ -z "$CN" ]; then
-    echo -n "Common Name (e.g. server FQDN or YOUR name) []:"
+    echo -n "Common Name (e.g. server FQDN or YOUR name) []: "
     read -r CN
   fi
 
   # Email Address
   if [ -z "$emailAddress" ]; then
-    echo -n "Email Address []:"
+    echo -n "Email Address []: "
     read -r emailAddress
   fi
 }
