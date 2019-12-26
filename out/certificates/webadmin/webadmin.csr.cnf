@@ -5,4 +5,4 @@ default_md = sha256
 distinguished_name = dn
 
 [dn]
-CN=localhost
+CN=webadmin

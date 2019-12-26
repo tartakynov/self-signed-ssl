@@ -43,13 +43,19 @@ subjectAltName = @alt_names
 
 [alt_names]
 EOF
-
 i=1
 for dns in $(echo $DNS | tr ',' '\n'); do
+  if [ $dns = "localhost" ]; then
+    ip="127.0.0.1"
+  fi
   echo "DNS.${i} = ${dns}" >> "${OUTPATH}/v3.ext"
   ((i++))
 done
 echo "DNS.${i} = ${CN}" >> "${OUTPATH}/v3.ext"
+
+if [ -n "$ip" ]; then
+  echo "IP.1 = ${ip}" >> "${OUTPATH}/v3.ext"
+fi
 }
 
 # Prompt for variables that were not provided in arguments
