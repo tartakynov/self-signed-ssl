@@ -4,3 +4,5 @@
 *.csr
 *.pem
 *.srl
+*.ext
+*.cnf
