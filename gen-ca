@@ -81,14 +81,14 @@ checkVariables() {
 # Build root CA certificate
 build() {
   # Set OUTPATH if not yet
-  if [ -v $OUTPATH ]; then
-    OUTPATH="$DIR/out/root/${FILENAME}/"
-    mkdir -p ${OUTPATH}
+  if [ -z "$OUTPATH" ]; then
+    OUTPATH="$DIR/out/root/${FILENAME}"
+    mkdir -p $OUTPATH
   fi
 
   # Generate CA key & crt
-  openssl genrsa -out "${OUTPATH}ca.key" 2048
-  openssl req -x509 -new -nodes -key "${OUTPATH}ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}ca.pem" -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
+  openssl genrsa -out "${OUTPATH}/ca.key" 2048
+  openssl req -x509 -new -nodes -key "${OUTPATH}/ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}/ca.pem" -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
 }
 
 # Process Arguments
