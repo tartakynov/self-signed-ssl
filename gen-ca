@@ -14,18 +14,15 @@ source "$DIR/common.sh"
 
 # Help Screen
 help() {
-  echo -n "${scriptName} [OPTIONS] -c=US --state=California
+  echo -n "${scriptName} [OPTIONS] -c=US
 
 Generate self-signed root CA using OpenSSL
 
  Options:
   -c|--country         Country Name (2 letter code)
-  -s|--state           State or Province Name (full name)
-  -l|--locality        Locality Name (eg, city)
   -o|--organization    Organization Name (eg, company)
   -u|--unit            Organizational Unit Name (eg, section)
   -n|--common-name     Common Name (e.g. server FQDN or YOUR name)
-  -e|--email           Email Address
   -p|--path            Path to output generated keys
   -d|--duration        Validity duration of the certificate (in days)
   -h|--help            Display this help and exit
@@ -39,18 +36,6 @@ checkVariables() {
   if [ -z "$C" ]; then
     echo -n "Country Name (2 letter code) [AU]: "
     read -r C
-  fi
-
-  # State
-  if [ -z "$ST" ]; then
-    echo -n "State or Province Name (full name) [Some-State]: "
-    read -r ST
-  fi
-
-  # Locality
-  if [ -z "$L" ]; then
-    echo -n "Locality Name (eg, city) []: "
-    read -r L
   fi
 
   # Organization
@@ -70,12 +55,6 @@ checkVariables() {
     echo -n "Common Name (e.g. server FQDN or YOUR name) []: "
     read -r CN
   fi
-
-  # Email Address
-  if [ -z "$emailAddress" ]; then
-    echo -n "Email Address []: "
-    read -r emailAddress
-  fi
 }
 
 # Build root CA certificate
@@ -88,7 +67,7 @@ build() {
 
   # Generate CA key & crt
   openssl genrsa -out "${OUTPATH}/ca.key" 2048
-  openssl req -x509 -new -nodes -key "${OUTPATH}/ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}/ca.pem" -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
+  openssl req -x509 -new -nodes -key "${OUTPATH}/ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}/ca.pem" -subj "/C=${C}/O=${O}/OU=${OU}/CN=${CN}"
 }
 
 # Process Arguments
@@ -98,12 +77,9 @@ while [ "$1" != "" ]; do
   case $PARAM in
     -h|--help) help; safeExit ;;
     -c|--country) C=$VALUE ;;
-    -s|--state) ST=$VALUE ;;
-    -l|--locality) L=$VALUE ;;
     -o|--organization) O=$VALUE ;;
     -u|--unit) OU=$VALUE ;;
     -n|--common-name) CN=$VALUE ;;
-    -e|--email) emailAddress=$VALUE ;;
     -p|--path) OUTPATH=$VALUE; testPath ;;
     -d|--duration) DURATION=$VALUE ;;
     -v|--verbose) VERBOSE=1 ;;

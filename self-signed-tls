@@ -14,7 +14,7 @@ source "$DIR/common.sh"
 
 # Help Screen
 help() {
-  echo -n "${scriptName} [OPTIONS] -c=US --state=California
+  echo -n "${scriptName} [OPTIONS] -n=qwerty.com
 
 Generate self-signed TLS certificate using OpenSSL
 
