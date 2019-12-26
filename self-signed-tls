@@ -79,7 +79,7 @@ checkVariables() {
 build() {
   # Set OUTPATH if not yet
   if [ -v $OUTPATH ]; then
-    OUTPATH="./out/certificates/${FILENAME}/"
+    OUTPATH="$DIR/out/certificates/${FILENAME}/"
     mkdir -p ${OUTPATH}
   fi
 
