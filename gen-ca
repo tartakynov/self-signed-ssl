@@ -21,7 +21,6 @@ Generate self-signed root CA using OpenSSL
  Options:
   -c|--country         Country Name (2 letter code)
   -o|--organization    Organization Name (eg, company)
-  -u|--unit            Organizational Unit Name (eg, section)
   -n|--common-name     Common Name (e.g. server FQDN or YOUR name)
   -p|--path            Path to output generated keys
   -d|--duration        Validity duration of the certificate (in days)
@@ -44,12 +43,6 @@ checkVariables() {
     read -r O
   fi
 
-  # Organizational Unit
-  if [ -z "$OU" ]; then
-    echo -n "Organizational Unit Name (eg, section) []: "
-    read -r OU
-  fi
-
   # Common Name
   if [ -z "$CN" ]; then
     echo -n "Common Name (e.g. server FQDN or YOUR name) []: "
@@ -67,7 +60,7 @@ build() {
 
   # Generate CA key & crt
   openssl genrsa -out "${OUTPATH}/ca.key" 2048
-  openssl req -x509 -new -nodes -key "${OUTPATH}/ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}/ca.pem" -subj "/C=${C}/O=${O}/OU=${OU}/CN=${CN}"
+  openssl req -x509 -new -nodes -key "${OUTPATH}/ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}/ca.pem" -subj "/C=${C}/O=${O}/CN=${CN}"
 }
 
 # Process Arguments
@@ -78,7 +71,6 @@ while [ "$1" != "" ]; do
     -h|--help) help; safeExit ;;
     -c|--country) C=$VALUE ;;
     -o|--organization) O=$VALUE ;;
-    -u|--unit) OU=$VALUE ;;
     -n|--common-name) CN=$VALUE ;;
     -p|--path) OUTPATH=$VALUE; testPath ;;
     -d|--duration) DURATION=$VALUE ;;
