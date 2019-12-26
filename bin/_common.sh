@@ -1,7 +1,7 @@
 # Directories
-THIS=$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null||echo $0)
-DIR=$(dirname "${THIS}")
-scriptName=$(basename "${THIS}")
+
+DIR=$(cd "${0%/*}" ; pwd);
+scriptName=$(basename "$0")
 
 # Certificate Variables
 VERBOSE=0
