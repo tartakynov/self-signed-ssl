@@ -70,6 +70,11 @@ showVals() {
   echo "Verbose: ${VERBOSE}";
 }
 
+# Santizie CN for file name
+sanitize() {
+  FILENAME=$(echo "${CN}" | sed -e 's/[^A-Za-z0-9._-]/_/g' | awk '{print tolower($0)}' )
+}
+
 # Process Arguments
 while [ "$1" != "" ]; do
   PARAM=$(echo "$1" | awk -F= '{print $1}')

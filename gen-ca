@@ -32,9 +32,6 @@ Generate self-signed root CA using OpenSSL
 
 # Build root CA certificate
 build() {
-  # Santizie domain name for file name
-  FILENAME=${CN/\*\./}
-
   # Set OUTPATH if not yet
   if [ -v $OUTPATH ]; then
     OUTPATH="$DIR/out/root/${FILENAME}/"
@@ -42,12 +39,13 @@ build() {
   fi
 
   # Generate CA key & crt
-  openssl genrsa -out "${OUTPATH}${FILENAME}_CA.key" 2048
-  openssl req -x509 -new -nodes -key "${OUTPATH}${FILENAME}_CA.key" -sha256 -days "${DURATION}" -out "${OUTPATH}${FILENAME}_CA.pem" -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
+  openssl genrsa -out "${OUTPATH}ca.key" 2048
+  openssl req -x509 -new -nodes -key "${OUTPATH}ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}ca.pem" -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
 }
 
 source "$DIR/common.sh"
 checkVariables
+sanitize
 build
-showVals
+# showVals
 safeExit
