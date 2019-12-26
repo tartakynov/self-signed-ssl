@@ -13,6 +13,7 @@ Generate self-signed TLS certificate using OpenSSL
   -n|--common-name     Common Name (e.g. server FQDN or YOUR name)
   -c|--ca-cert         CA certificate path
   -k|--ca-key          CA certificate key
+  -a|--alt-dns         Alt DNS Names (comma separated, no space)
   -p|--path            Path to output generated keys
   -d|--duration        Validity duration of the certificate (in days)
   -h|--help            Display this help and exit
@@ -41,8 +42,14 @@ keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = ${CN}
 EOF
+
+i=1
+for dns in $(echo $DNS | tr ',' '\n'); do
+  echo "DNS.${i} = ${dns}" >> "${OUTPATH}/v3.ext"
+  ((i++))
+done
+echo "DNS.${i} = ${CN}" >> "${OUTPATH}/v3.ext"
 }
 
 # Prompt for variables that were not provided in arguments
@@ -53,6 +60,12 @@ checkVariables() {
     read -r CN
   fi
 
+  # Alt names
+  if [ -z "$DNS" ]; then
+    echo -n "Alt DNS (Alt DNS Names, comma separated, no space) []: "
+    read -r DNS
+  fi
+
   # Select CA key & crt
   if [ -z "$CA_cert" ] || [ -z "$CA_key" ]; then
     printf "Please select root CA certificate folder:\n"
@@ -61,8 +74,12 @@ checkVariables() {
       echo "> Invalid Number"
     done
 
-    CA_key="$d/ca.key"
-    CA_cert="$d/ca.pem"
+    CA_key="${d}ca.key"
+    CA_cert="${d}ca.pem"
+    CA_srl="${d}ca.srl"
+  else
+    d=$(dirname "$CA_cert")
+    CA_srl="${d}ca.srl"
   fi
 }
 
@@ -84,7 +101,7 @@ build() {
   openssl req -new -sha256 -nodes -out "${OUTPATH}/${FILENAME}.csr" -newkey rsa:2048 -keyout "${OUTPATH}/${FILENAME}.key" -config <( cat "${OUTPATH}/${FILENAME}.csr.cnf" )
 
   # Server certificate
-  openssl x509 -req -in "${OUTPATH}/${FILENAME}.csr" -CA "${CA_cert}" -CAkey "${CA_key}" -CAcreateserial -out "${OUTPATH}/${FILENAME}.crt" -days "${DURATION}" -sha256 -extfile "${OUTPATH}/v3.ext"
+  openssl x509 -req -in "${OUTPATH}/${FILENAME}.csr" -CA "${CA_cert}" -CAkey "${CA_key}" -CAserial "${CA_srl}"  -out "${OUTPATH}/${FILENAME}.crt" -days "${DURATION}" -sha256 -extfile "${OUTPATH}/v3.ext"
 }
 
 # Process Arguments
@@ -96,6 +113,7 @@ while [ "$1" != "" ]; do
     -n|--common-name) CN=$VALUE ;;
     -c|--ca-cert) CA_cert=$VALUE ;;
     -k|--ca-key) CA_key=$VALUE ;;
+    -a|--alt-dns) DNS=$VALUE ;;
     -p|--path) OUTPATH=$VALUE; testPath ;;
     -d|--duration) DURATION=$VALUE ;;
     -v|--verbose) VERBOSE=1 ;;
