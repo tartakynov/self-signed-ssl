@@ -1,16 +1,7 @@
 #!/bin/bash
 
-# Directories
-THIS=$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null||echo $0)
-DIR=$(dirname "${THIS}")
-scriptName=$(basename "${THIS}")
-
-# Certificate Variables
-VERBOSE=0
-DURATION=365 # 1 year
-
 # Load common functions
-source "$DIR/common.sh"
+source "${0%/*}/_common.sh"
 
 # Help Screen
 help() {
@@ -54,7 +45,7 @@ checkVariables() {
 build() {
   # Set OUTPATH if not yet
   if [ -z "$OUTPATH" ]; then
-    OUTPATH="$DIR/out/root/${FILENAME}"
+    OUTPATH="$DIR/../out/root/${FILENAME}"
     mkdir -p $OUTPATH
   fi
 

@@ -1,3 +1,12 @@
+# Directories
+THIS=$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null||echo $0)
+DIR=$(dirname "${THIS}")
+scriptName=$(basename "${THIS}")
+
+# Certificate Variables
+VERBOSE=0
+DURATION=365 # 1 year
+
 safeExit() {
   trap - INT TERM EXIT
   exit
