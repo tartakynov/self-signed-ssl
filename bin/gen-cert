@@ -101,7 +101,7 @@ build() {
   openssl req -new -sha256 -nodes -out "${OUTPATH}/${FILENAME}.csr" -newkey rsa:2048 -keyout "${OUTPATH}/${FILENAME}.key" -config <( cat "${OUTPATH}/${FILENAME}.csr.cnf" )
 
   # Server certificate
-  openssl x509 -req -in "${OUTPATH}/${FILENAME}.csr" -CA "${CA_cert}" -CAkey "${CA_key}" -CAserial "${CA_srl}"  -out "${OUTPATH}/${FILENAME}.crt" -days "${DURATION}" -sha256 -extfile "${OUTPATH}/v3.ext"
+  openssl x509 -req -in "${OUTPATH}/${FILENAME}.csr" -CA "${CA_cert}" -CAkey "${CA_key}" -CAserial "${CA_srl}" -CAcreateserial -out "${OUTPATH}/${FILENAME}.crt" -days "${DURATION}" -sha256 -extfile "${OUTPATH}/v3.ext"
 }
 
 # Process Arguments
