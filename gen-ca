@@ -9,6 +9,9 @@ scriptName=$(basename "${THIS}")
 VERBOSE=0
 DURATION=365 # 1 year
 
+# Load common functions
+source "$DIR/common.sh"
+
 # Help Screen
 help() {
   echo -n "${scriptName} [OPTIONS] -c=US --state=California
@@ -30,6 +33,51 @@ Generate self-signed root CA using OpenSSL
 "
 }
 
+# Prompt for variables that were not provided in arguments
+checkVariables() {
+  # Country
+  if [ -z "$C" ]; then
+    echo -n "Country Name (2 letter code) [AU]: "
+    read -r C
+  fi
+
+  # State
+  if [ -z "$ST" ]; then
+    echo -n "State or Province Name (full name) [Some-State]: "
+    read -r ST
+  fi
+
+  # Locality
+  if [ -z "$L" ]; then
+    echo -n "Locality Name (eg, city) []: "
+    read -r L
+  fi
+
+  # Organization
+  if [ -z "$O" ]; then
+    echo -n "Organization Name (eg, company) [Internet Widgits Pty Ltd]: "
+    read -r O
+  fi
+
+  # Organizational Unit
+  if [ -z "$OU" ]; then
+    echo -n "Organizational Unit Name (eg, section) []: "
+    read -r OU
+  fi
+
+  # Common Name
+  if [ -z "$CN" ]; then
+    echo -n "Common Name (e.g. server FQDN or YOUR name) []: "
+    read -r CN
+  fi
+
+  # Email Address
+  if [ -z "$emailAddress" ]; then
+    echo -n "Email Address []: "
+    read -r emailAddress
+  fi
+}
+
 # Build root CA certificate
 build() {
   # Set OUTPATH if not yet
@@ -43,9 +91,28 @@ build() {
   openssl req -x509 -new -nodes -key "${OUTPATH}ca.key" -sha256 -days "${DURATION}" -out "${OUTPATH}ca.pem" -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
 }
 
-source "$DIR/common.sh"
+# Process Arguments
+while [ "$1" != "" ]; do
+  PARAM=$(echo "$1" | awk -F= '{print $1}')
+  VALUE=$(echo "$1" | awk -F= '{print $2}')
+  case $PARAM in
+    -h|--help) help; safeExit ;;
+    -c|--country) C=$VALUE ;;
+    -s|--state) ST=$VALUE ;;
+    -l|--locality) L=$VALUE ;;
+    -o|--organization) O=$VALUE ;;
+    -u|--unit) OU=$VALUE ;;
+    -n|--common-name) CN=$VALUE ;;
+    -e|--email) emailAddress=$VALUE ;;
+    -p|--path) OUTPATH=$VALUE; testPath ;;
+    -d|--duration) DURATION=$VALUE ;;
+    -v|--verbose) VERBOSE=1 ;;
+    *) echo "ERROR: unknown parameter \"$PARAM\""; help; exit 1 ;;
+  esac
+  shift
+done
+
 checkVariables
 sanitize
 build
-# showVals
 safeExit
